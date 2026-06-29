@@ -1,0 +1,27 @@
+#python backend venv
+backend/venv/
+
+#cache
+backend/__pycache__/
+
+#vscode workspace settings
+.vscode/
+
+#node_mods
+frontend/node_modules/
+
+#dist
+frontend/dist/
+
+#env
+backend/.env
+
+#servacc
+backend/servacc.json
+
+
+
+
+
+
+
