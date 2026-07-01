@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import requests
 
+from fastapi.middleware.cors import CORSMiddleware
+
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -28,6 +30,14 @@ prices = {
 }
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = ["http://localhost:5173"],
+    allow_credentials = True,
+    allow_methods = ["*"],
+    allow_headers = ["*"],
+)
 
 
 class inpc(BaseModel):
@@ -74,6 +84,7 @@ def recommend(uin : inpc):
     price = give_prc(uin.crop)
 
     return gen_adv(temp, hum, uin.crop, weather, price)
+
 
 
 
