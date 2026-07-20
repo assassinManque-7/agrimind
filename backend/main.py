@@ -4,13 +4,11 @@ import requests
 
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend.services.weather import get_weather
+
 import os
 from dotenv import load_dotenv
 load_dotenv()
-
-import google.generativeai as genai
-genai.configure(api_key = os.getenv("GEM_API_KEY"))
-model = genai.GenerativeModel("gemini-2.5-flash")
 
 API_KEY = os.getenv("OW_API_KEY")
 
@@ -44,20 +42,7 @@ class inpc(BaseModel):
     city : str
     crop : str
 
-def get_weather(city):
-    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
-    resp = requests.get(url)
-
-    if resp.status_code != 200:
-        return 'invalid input'
-
-    data = resp.json()
-
-    temp = data['main']['temp']
-    hum = data['main']['humidity']
-    weather = data['weather'][0]['description']
-
-    return temp, hum, weather
+weather = get_weather(inpc.city)
 
 def gen_adv(temp, hum, crop, weather, price):
 
