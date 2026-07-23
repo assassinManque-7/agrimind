@@ -1,45 +1,61 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"
 
 function App(){
+
   const [city, setCity] = useState("");
   const [crop, setCrop] = useState("");
 
-  const [res, setRes] = useState(null);
-  const [load, setLoad] = useState(true);
-  const [err, setErr] = useState(null);
-  
+  const [res, setRes] = useState("");
+
   const inpd = {city, crop};
 
-  const sendinp = async (inputData) => {
+  const sendinp = async (inp) =>{
     const resp = await fetch(
-      "http://localhost:8000/recom",
+      "http://127.0.0.1:8000/recom",
       {
         method : "POST",
+        headers : {"Content-Type" : "application/json"},
+        body : JSON.stringify(inp),
 
-        headers : {
-          "Content-Type" : "application/json"
-        },
-
-        body : JSON.stringify(inputData),
       }
-    );
+    )
+
+    console.log(resp.status)
 
     const data = await resp.json();
 
-    setRes(JSON.stringify(data, null, 2));
+    console.log(data)
+
+    setRes(JSON.stringify(data, null, 4));
+
   }
 
   return (
-    <>
 
-      <h1>Agrimind</h1>
-      <input placeholder = "city" value = {city} onChange = {(event) => setCity(event.target.value)}/>
-      <input placeholder = "crop" value = {crop} onChange = {(event) => setCrop(event.target.value)}/>
-      <button onClick = {() => sendinp(inpd)}>get recommendation</button>
-      <textarea value = {res ?? ""} readOnly/>
-    
+    <>
+      <input
+        value = {city}
+        onChange = {(e) => setCity(e.target.value)}
+        placeholder = "enter city"
+      />
+
+      <input
+        value = {crop}
+        onChange = {(e) => setCrop(e.target.value)}
+        placeholder = "enter crop"
+      />
+
+      <button onClick = {() => sendinp(inpd)}>
+        recommend
+      </button>
+
+      <textarea 
+        value = {res}
+      />
+
     </>
-  );
+  )
 }
 
 export default App;
+
