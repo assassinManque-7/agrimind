@@ -4,15 +4,11 @@ import requests
 
 load_dotenv()
 
-from backend.main import inpc
-
 API_KEY = os.getenv("OW_API_KEY")
-
-params = {"city" : city}
 
 def get_weather(city):
     resp = requests.get(
-        url = f"http://api.openweathermap.org/data/2.5/weather", 
+        url = f"http://api.openweathermap.org/data/2.5/weather/", 
 
         params = {
             "q" : city, 
@@ -25,7 +21,7 @@ def get_weather(city):
 
     temp = data["main"]["temp"]
     hum = data["main"]["humidity"]
-    weather = data["weahter"]["description"]
+    weather = data["weather"][0]["description"]
 
     return {
         "temp" : temp, 
