@@ -16,7 +16,7 @@ class gemo(BaseModel):
 
 client = genai.Client(api_key = os.getenv("GEM_API_KEY"))
 
-def ask_gemini(context, crop):
+def gemini_recom(context, crop):
     cont = json.dumps(context, indent = 2)
 
     prompt = f"""You are an agricultural expert. 
@@ -42,3 +42,15 @@ def ask_gemini(context, crop):
 
     return data
 
+def ask_gemini(query, retrieved_chunk):
+    prompt = f"""you are an agricultural expert. generate a response to the given farmer query using information that you're sure of, rather
+    than making assumptions. also ensure that you're faithful to the context provided - 
+    query : {query}
+    context : {retrieved_chunk} """
+
+    resp = client.models.generate_content(
+        model = "gemini-2.5-flash", 
+        contents = prompt,
+    )
+
+    return resp.text
