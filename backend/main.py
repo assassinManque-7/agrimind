@@ -5,7 +5,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from services.weather import get_weather
 
-from services.gemini import ask_gemini
+from services.gemini import gemini_recom, ask_gemini
+
+from services.retrieval import embed_query, retrieve_embed
+
+from services.index import index_doc, record1
 
 import os
 from dotenv import load_dotenv
@@ -15,12 +19,6 @@ API_KEY = os.getenv("OW_API_KEY")
 
 if API_KEY is None:
     raise RuntimeError("openweather API not found in .env")
-
-crop_base = {
-    'rice' : {"temp" : [21,37], "humidity" : [80,85]},
-    'maize' : {"temp" : [21, 27], "humidity" : [50, 80]}, 
-    'wheat' : {"temp" : [12, 25], "humidity" : [50, 60]}
-}
 
 prices = {
     'rice' : 2400,
@@ -43,6 +41,8 @@ class inpc(BaseModel):
     city : str
     crop : str
 
+class queryINP(BaseModel):
+    query : str
 
 
 def give_prc(crop):
@@ -52,10 +52,21 @@ def give_prc(crop):
 def recommend(uin : inpc):
     weather = get_weather(uin.city)
 
-    gemop = ask_gemini(weather, uin.crop)
+    gemop = gemini_recom(weather, uin.crop)
 
     return gemop
+
+@app.post('/query')
+def answer(uin : queryINP):
+
+    winner_chunk = retrieve_embed(uin.query, record1)
+
+    answer = ask_gemini(uin.query, winner_chunk)
+
+    return answer
+
     
+
 
 
 
